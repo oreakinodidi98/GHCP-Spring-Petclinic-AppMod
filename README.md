@@ -10,141 +10,236 @@ languages:
 urlFragment: https://github.com/spring-projects/spring-petclinic
 ---
 
-# Modernise and Containerise
+# Spring Petclinic - Application Modernization Demo
 
-## Prerequisites
-
-Before starting, ensure you have the following:
-
-- **GitHub account**
-- **Azure subscription**
-- **GitHub App Modernization extension** installed
-- **Docker** installed locally
-- **Azure CLI** installed and authenticated
-- **VS Code** (recommended)
-
-Basic familiarity with:
-- Java & Spring Boot
-- Containers
-- Kubernetes concepts
+> **Transform a traditional Java application into a cloud-native, containerized workload running on Azure Kubernetes Service (AKS)**
 
 ---
 
-## Setting up the GitHub Repository
+## What This Repository Is
 
-1. Fork this repository
-2. Clone it locally:
+This repository demonstrates an **end-to-end application modernization journey** using GitHub App Modernization (AppMod). It takes the classic [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) sample application and walks you through:
 
-```bash
-git clone https://github.com/<your-org-or-user>/spring-petclinic-appmod-demo.git
-cd spring-petclinic-appmod-demo
+1. **Analyzing** the codebase for cloud readiness
+2. **Containerizing** the application with Docker
+3. **Deploying** to Azure Kubernetes Service (AKS)
+4. **Automating** the entire pipeline with GitHub Actions
+
+---
+
+## End Goal
+
+By completing this demo, you will achieve:
+
+| Outcome | Description |
+|---------|-------------|
+| **Containerized Application** | Spring Petclinic packaged as a Docker image |
+| **Cloud Deployment** | Application running on AKS with external access |
+| **CI/CD Pipeline** | Automated build, push, and deploy via GitHub Actions |
+| **Modernization Experience** | Hands-on familiarity with GitHub AppMod tooling |
+
+```
+┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
+│  Source Code    │ ──▶  │  Docker Image   │ ──▶  │  Azure ACR      │ ──▶  │  AKS Cluster    │
+│  (Spring Boot)  │      │  (Multi-stage)  │      │  (Registry)     │      │  (Production)   │
+└─────────────────┘      └─────────────────┘      └─────────────────┘      └─────────────────┘
 ```
 
-## Overview
+---
 
-Spring Petclinic is a Spring Boot application that demonstrates:
+## Table of Contents
 
-- Layered architecture (controller, service, repository)
-- Spring MVC and REST patterns
-- Embedded database by default
-- Maven‑based build
+- [Spring Petclinic - Application Modernization Demo](#spring-petclinic---application-modernization-demo)
+  - [What This Repository Is](#what-this-repository-is)
+  - [End Goal](#end-goal)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Quick Start](#quick-start)
+    - [3. Access the application](#3-access-the-application)
+  - [About Spring Petclinic](#about-spring-petclinic)
+  - [Modernization Workflow](#modernization-workflow)
+    - [Step 1: Analyze with GitHub AppMod](#step-1-analyze-with-github-appmod)
+    - [Step 2: Containerize](#step-2-containerize)
+    - [Step 3: Deploy to AKS](#step-3-deploy-to-aks)
+    - [Step 4: Automate with GitHub Actions](#step-4-automate-with-github-actions)
+  - [Database Configuration](#database-configuration)
+  - [Cleanup](#cleanup)
+  - [Contributing](#contributing)
+  - [Disclaimer](#disclaimer)
 
-## Running the Application Locally
+---
 
-- ./mvnw spring
-- Access the application at:
-http://localhost:8080
+## Prerequisites
 
-### Build and Run as a JAR
+| Requirement | Purpose |
+|-------------|---------|
+| **GitHub Account** | Source control and Actions |
+| **Azure Subscription** | AKS and ACR hosting |
+| **GitHub App Modernization Extension** | Analysis and guidance |
+| **Docker** | Local container builds |
+| **Azure CLI** | Azure resource management |
+| **VS Code** (recommended) | Development environment |
 
-./mvnw package
-java -jar target/*.jar
+**Recommended Knowledge:**
+- Java & Spring Boot basics
+- Container fundamentals
+- Kubernetes concepts (Pods, Deployments, Services)
 
-## Modernising with GitHub App Modernization
+---
 
-GitHub App Modernization (AppMod) helps assess and modernise applications by:
+## Quick Start
 
-- Analysing the Java codebase
-- Identifying containerisation readiness
-- Providing Azure‑aligned modernisation guidance
+```bash
+# 1. Fork and clone this repository
+git clone https://github.com/<your-username>/spring-petclinic-appmod-demo.git
 
-### In this demo, AppMod is used to:
+cd spring-petclinic-appmod-demo
 
-- Validate the application for container deployment
-- Inform platform and runtime decisions
-- Guide AKS‑based deployment
+# 2. Run locally to verify the app works
 
-```The application code remains largely unchanged to keep the focus on delivery modernisation.```
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-17.0.18"
 
-## Containerisation
+# Formatting
+./mvnw spring-javaformat:apply -q  
 
-The application is containerised using:
+# Compile
+./mvnw clean compile --strict-checksums
 
-- Multi‑stage Docker builds
-- Maven build stage
-- Lightweight Java runtime image
+# Run tests
+./mvnw test --strict-checksums
 
-Key benefits:
+# Run tests (excludes database integration tests)
+./mvnw test -Dtest='!PostgresIntegrationTests,!MySqlIntegrationTests'
 
-- Portable deployment
-- Reproducible builds
-- Cloud‑native packaging
+# Package
+./mvnw package -DskipTests --strict-checksums
 
-## Deploying to Azure Kubernetes Service (AKS)
+# Run the application
+./mvnw spring-boot:run
 
-The containerised application is deployed to AKS using:
+./mvnw spring-boot:run '-Dspring-boot.run.arguments=--server.port=8081'
+```
 
-- Kubernetes Deployment
-- Kubernetes Service
-- Optional Ingress
+### 3. Access the application
 
-### The deployment demonstrates:
+Once the application is running, access it at `http://localhost:8080`
 
-- Stateless application design
-- Container image pull from ACR
-- External access via Kubernetes Service or Ingress
+---
 
+## About Spring Petclinic
 
-## CI/CD with GitHub Actions
+Spring Petclinic is a classic sample application demonstrating Spring Boot best practices:
 
-GitHub Actions is used to automate the full CI/CD lifecycle directly from the repository.
+| Feature | Technology |
+|---------|------------|
+| **Architecture** | Layered (Controller → Service → Repository) |
+| **Web Framework** | Spring MVC with Thymeleaf templates |
+| **Data Access** | Spring Data JPA |
+| **Database** | HSQLDB (in-memory, default) or MySQL |
+| **Build Tool** | Maven |
 
-### What the Workflow Does
+---
 
-- Builds the Java application
-- Builds the Docker image
-- Pushes the image to Azure Container Registry
-- Deploys the application to AKS
+## Modernization Workflow
+
+### Step 1: Analyze with GitHub AppMod
+
+GitHub App Modernization assesses your codebase and provides:
+
+- **Containerization readiness** analysis
+- **Azure-aligned recommendations** for target platforms
+- **Migration guidance** for cloud deployment
+
+> The application code remains largely unchanged—the focus is on *delivery modernization*, not code refactoring.
+
+### Step 2: Containerize
+
+The application uses a **multi-stage Docker build**:
+
+```dockerfile
+# Stage 1: Build
+FROM maven:3.9-eclipse-temurin-17 AS build
+COPY . .
+RUN mvn package -DskipTests
+
+# Stage 2: Runtime
+FROM eclipse-temurin:17-jre-alpine
+COPY --from=build /target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+**Benefits:**
+- Portable and reproducible builds
+- Smaller runtime image
+- Cloud-native packaging
+
+### Step 3: Deploy to AKS
+
+Deploy to Azure Kubernetes Service using:
+
+| Resource | Purpose |
+|----------|---------|
+| **Deployment** | Manages application Pods |
+| **Service** | Exposes the app (LoadBalancer or ClusterIP) |
+| **Ingress** (optional) | HTTP routing and TLS termination |
+
+**Key Design Decisions:**
+- Stateless application design (no persistent volumes)
+- Images pulled from Azure Container Registry (ACR)
+- External access via Service or Ingress
+
+### Step 4: Automate with GitHub Actions
+
+The CI/CD pipeline automates:
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  Build JAR   │ ─▶ │ Build Image  │ ─▶ │ Push to ACR  │ ─▶ │ Deploy AKS   │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+```
+
+- Triggered on push to `main`
+- Builds and tests the Java application
+- Builds and tags the Docker image
+- Pushes to Azure Container Registry
+- Deploys to AKS cluster
+
+---
 
 ## Database Configuration
 
-By default, Spring Petclinic uses an in‑memory database, which is ideal for:
+| Mode | Database | Use Case |
+|------|----------|----------|
+| **Default** | HSQLDB (in-memory) | Demos, workshops, quick testing |
+| **Production** | MySQL | Persistent data requirements |
 
-- Demos
-- Workshops
-- Labs
+This demo uses the **in-memory database** to keep focus on:
+- Modernization process
+- Containerization techniques
+- Platform deployment patterns
 
-This demo intentionally avoids persistent storage to keep the focus on:
-
-- Modernisation
-- Containerisation
-- Platform deployment
+---
 
 ## Cleanup
 
-To avoid Azure costs after the demo:
+To avoid ongoing Azure costs after completing the demo:
 
-- Delete the AKS cluster
-- Delete the Azure Container Registry
-- Remove associated resource groups
+```bash
+# Delete the resource group (removes AKS, ACR, and related resources)
+az group delete --name <your-resource-group> --yes --no-wait
+```
+
+---
 
 ## Contributing
 
-This project welcomes contributions.
-Most contributions require agreement to a Contributor License Agreement (CLA):
-https://cla.opensource.microsoft.com
-This project follows the Microsoft Open Source Code of Conduct:
-https://opensource.microsoft.com/codeofconduct/
+This project welcomes contributions and suggestions.
 
-Disclaimer
-This repository is intended for demo and educational purposes only and is not a production reference architecture.
+- **CLA**: Most contributions require a [Contributor License Agreement](https://cla.opensource.microsoft.com)
+- **Code of Conduct**: This project follows the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/)
+
+---
+
+## Disclaimer
+
+> This repository is intended for **demo and educational purposes only** and is not a production reference architecture.
