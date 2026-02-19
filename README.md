@@ -55,7 +55,10 @@ By completing this demo, you will achieve:
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Quick Start](#quick-start)
-    - [3. Access the application](#3-access-the-application)
+    - [1. Fork and Clone](#1-fork-and-clone)
+    - [2. Build and Run Locally](#2-build-and-run-locally)
+    - [3. Start the Application](#3-start-the-application)
+    - [4. Access the Application](#4-access-the-application)
   - [About Spring Petclinic](#about-spring-petclinic)
   - [Modernization Workflow](#modernization-workflow)
     - [Step 1: Analyze with GitHub AppMod](#step-1-analyze-with-github-appmod)
@@ -89,40 +92,48 @@ By completing this demo, you will achieve:
 
 ## Quick Start
 
+### 1. Fork and Clone
+
 ```bash
-# 1. Fork and clone this repository
 git clone https://github.com/<your-username>/spring-petclinic-appmod-demo.git
-
 cd spring-petclinic-appmod-demo
+```
 
-# 2. Run locally to verify the app works
+### 2. Build and Run Locally
 
+```bash
+# Set Java environment (Windows PowerShell)
 $env:JAVA_HOME = "C:\Program Files\Java\jdk-17.0.18"
 
-# Formatting
-./mvnw spring-javaformat:apply -q  
+# Apply code formatting
+./mvnw spring-javaformat:apply -q
 
-# Compile
+# Compile the project
 ./mvnw clean compile --strict-checksums
 
-# Run tests
+# Run all tests
 ./mvnw test --strict-checksums
 
-# Run tests (excludes database integration tests)
+# Run tests (excluding database integration tests)
 ./mvnw test -Dtest='!PostgresIntegrationTests,!MySqlIntegrationTests'
 
-# Package
+# Package the application
 ./mvnw package -DskipTests --strict-checksums
+```
 
-# Run the application
+### 3. Start the Application
+
+```bash
+# Run on default port (8080)
 ./mvnw spring-boot:run
 
+# Or specify a custom port
 ./mvnw spring-boot:run '-Dspring-boot.run.arguments=--server.port=8081'
 ```
 
-### 3. Access the application
+### 4. Access the Application
 
-Once the application is running, access it at `http://localhost:8080`
+Once running, open your browser to: **http://localhost:8080**
 
 ---
 
